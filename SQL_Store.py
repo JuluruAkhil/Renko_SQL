@@ -28,7 +28,7 @@ for ticker in tickers:
 
 def on_message(ws, message):
     global i, Close_prev, Open_prev, Previous
-    print(message)
+    # print(message)
     # global length
     Symbol = json.loads(message)["data"][0]["s"]
     if (Symbol == "BINANCE:BTCUSDT"):
