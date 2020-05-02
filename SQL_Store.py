@@ -112,8 +112,8 @@ def on_close(ws):
     for ticker in tickers:
         with conn:
             c.execute("INSERT INTO {} VALUES ({},{},{},{},0)".format(ticker, 0, 0, 0, 0))
-        c.execute("SELECT * FROM {}".format(ticker))
-        print(c.fetchall())
+        # c.execute("SELECT * FROM {}".format(ticker))
+        # print(c.fetchall())
 
 def on_open(ws):
     tickers = ["LYFT","AMZN","MSFT","AAPL","BINANCE:BTCUSDT"]
@@ -123,7 +123,7 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("wss://ws.finnhub.io?token=bpp3tkvrh5rb5khcrlsg",
+    ws = websocket.WebSocketApp("wss://ws.finnhub.io?token=bqmh11vrh5rc5ul5lhg0",
                               on_message = on_message,
                               on_error = on_error,
                               on_close = on_close)
