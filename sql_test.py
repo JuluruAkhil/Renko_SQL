@@ -8,23 +8,35 @@ import websocket
 import json
 import sqlite3
 
-conn = sqlite3.connect("Renko_const.db")
-i = {"LYFT":1,"AMZN":1,"MSFT":1,"AAPL":1,"BTCUSDT":1}
-Close_prev = {"LYFT":29.529516041716104,"AMZN":2302.286885431811,"MSFT":174.2538711995829,"AAPL":288.4628668507927,"BTCUSDT":8848.876541105923}
-length = {"LYFT":0.2250403298569918,"AMZN":11.890046778926063,"MSFT":0.4915322001042619,"AAPL":0.5171436039071091,"BTCUSDT":47.93884703530745}
-Open_prev = {"LYFT":29.754556371573095,"AMZN":2290.3968386528845,"MSFT":174.74540339968718,"AAPL":288.9800104546998,"BTCUSDT":8800.937694070615}
-Previous = {"LYFT":-1,"AMZN":-1,"MSFT":-1,"AAPL":-1,"BTCUSDT":1}
-
+conn = sqlite3.connect("Renlo_const.db")
 c = conn.cursor()
 
 tickers = ["LYFT","AMZN","MSFT","AAPL","BTCUSDT"]
 
+i = {"LYFT":1,"AMZN":1,"MSFT":1,"AAPL":1,"BTCUSDT":1}
+Close_prev = {"LYFT":29.529516041716104,"AMZN":2302.286885431811,"MSFT":174.2538711995829,"AAPL":288.4628668507927,"BTCUSDT":8604.94002561612}
+length = {"LYFT":0.2250403298569918,"AMZN":11.890046778926063,"MSFT":0.4915322001042619,"AAPL":0.5171436039071091,"BTCUSDT":11.595453381084987}
+Open_prev = {"LYFT":29.754556371573095,"AMZN":2290.3968386528845,"MSFT":174.74540339968718,"AAPL":288.9800104546998,"BTCUSDT":8593.344572235035}
+Previous = {"LYFT":-1,"AMZN":-1,"MSFT":-1,"AAPL":-1,"BTCUSDT":1}
+
+c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
+conn.commit()
+
 for ticker in tickers:
-    try:
-        c.execute("CREATE TABLE {} (Date real,Open real,Close real,Volume real, Conditon real)".format(ticker))
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass
+    c.execute("CREATE TABLE IF NOT EXISTS {} (Date real,Open real,Close real,Volume real, Conditon real)".format(ticker))
+    conn.commit()
+        
+for ticker in tickers:
+    with conn:
+        c.execute("SELECT * FROM Prev_Data WHERE Symbol='{}'".format(ticker))
+        p = c.fetchall()
+        if len(p) != 0:
+            i[ticker] = p[-1][1]
+            Close_prev[ticker] = p[-1][2]
+            length[ticker] = p[-1][3]
+            Open_prev[ticker] = p[-1][4]
+            Previous[ticker] = p[-1][5]
+            
 
 def on_message(ws, message):
     global i, Close_prev, Open_prev, Previous, length
@@ -111,8 +123,9 @@ def on_close(ws):
     global tickers
     for ticker in tickers:
         with conn:
+            c.execute("INSERT INTO Prev_Data VALUES ('{}',{},{},{},{},{})".format(ticker, i[ticker], Close_prev[ticker], length[ticker], Open_prev[ticker], Previous[ticker]))
             c.execute("INSERT INTO {} VALUES ({},{},{},{},0)".format(ticker, 0, 0, 0, 0))
-        # c.execute("SELECT * FROM {}".format(ticker))
+        # c.execute("SELECT * FROM Prev_Data")
         # print(c.fetchall())
 
 def on_open(ws):

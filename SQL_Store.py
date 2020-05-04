@@ -9,22 +9,34 @@ import json
 import sqlite3
 
 conn = sqlite3.connect("Renko.db")
+c = conn.cursor()
+
+tickers = ["LYFT","AMZN","MSFT","AAPL","BTCUSDT"]
+
 i = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 Close_prev = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 length = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 Open_prev = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 Previous = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 
-c = conn.cursor()
-
-tickers = ["LYFT","AMZN","MSFT","AAPL","BTCUSDT"]
+c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
+conn.commit()
 
 for ticker in tickers:
-    try:
-        c.execute("CREATE TABLE {} (Date real,Open real,Close real,Volume real, Conditon real)".format(ticker))
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass
+    c.execute("CREATE TABLE IF NOT EXISTS {} (Date real,Open real,Close real,Volume real, Conditon real)".format(ticker))
+    conn.commit()
+        
+for ticker in tickers:
+    with conn:
+        c.execute("SELECT * FROM Prev_Data WHERE Symbol='{}'".format(ticker))
+        p = c.fetchall()
+        if len(p) != 0:
+            i[ticker] = p[-1][1]
+            Close_prev[ticker] = p[-1][2]
+            length[ticker] = p[-1][3]
+            Open_prev[ticker] = p[-1][4]
+            Previous[ticker] = p[-1][5]
+            
 
 def on_message(ws, message):
     global i, Close_prev, Open_prev, Previous
@@ -111,6 +123,7 @@ def on_close(ws):
     global tickers
     for ticker in tickers:
         with conn:
+            c.execute("INSERT INTO Prev_Data VALUES ('{}',{},{},{},{},{})".format(ticker, i[ticker], Close_prev[ticker], length[ticker], Open_prev[ticker], Previous[ticker]))
             c.execute("INSERT INTO {} VALUES ({},{},{},{},0)".format(ticker, 0, 0, 0, 0))
         # c.execute("SELECT * FROM {}".format(ticker))
         # print(c.fetchall())
