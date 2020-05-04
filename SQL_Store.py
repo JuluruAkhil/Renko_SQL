@@ -11,13 +11,13 @@ import sqlite3
 conn = sqlite3.connect("Renko.db")
 c = conn.cursor()
 
-tickers = ["LYFT","AMZN","MSFT","AAPL","BTCUSDT"]
+tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
 
-i = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
-Close_prev = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
-length = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
-Open_prev = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
-Previous = {"LYFT":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+i = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Close_prev = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+length = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Open_prev = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Previous = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 
 c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
 conn.commit()
@@ -129,7 +129,7 @@ def on_close(ws):
         # print(c.fetchall())
 
 def on_open(ws):
-    tickers = ["LYFT","AMZN","MSFT","AAPL","BINANCE:BTCUSDT"]
+    tickers = ["SPY","AMZN","MSFT","AAPL","BINANCE:BTCUSDT"]
     for ticker in tickers:
         print('{{"type":"subscribe","symbol":"{}"}}'.format(ticker))
         ws.send('{{"type":"subscribe","symbol":"{}"}}'.format(ticker))

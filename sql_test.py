@@ -11,13 +11,13 @@ import sqlite3
 conn = sqlite3.connect("Renlo_const.db")
 c = conn.cursor()
 
-tickers = ["LYFT","AMZN","MSFT","AAPL","BTCUSDT"]
+tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
 
-i = {"LYFT":1,"AMZN":1,"MSFT":1,"AAPL":1,"BTCUSDT":1}
-Close_prev = {"LYFT":29.529516041716104,"AMZN":2302.286885431811,"MSFT":174.2538711995829,"AAPL":288.4628668507927,"BTCUSDT":8604.94002561612}
-length = {"LYFT":0.2250403298569918,"AMZN":11.890046778926063,"MSFT":0.4915322001042619,"AAPL":0.5171436039071091,"BTCUSDT":11.595453381084987}
-Open_prev = {"LYFT":29.754556371573095,"AMZN":2290.3968386528845,"MSFT":174.74540339968718,"AAPL":288.9800104546998,"BTCUSDT":8593.344572235035}
-Previous = {"LYFT":-1,"AMZN":-1,"MSFT":-1,"AAPL":-1,"BTCUSDT":1}
+i = {"SPY":1,"AMZN":1,"MSFT":1,"AAPL":1,"BTCUSDT":1}
+Close_prev = {"SPY":284.7119733128265,"AMZN":2302.286885431811,"MSFT":174.2538711995829,"AAPL":288.4628668507927,"BTCUSDT":8677.211971030454}
+length = {"SPY":4.49028190183235,"AMZN":11.890046778926063,"MSFT":0.4915322001042619,"AAPL":0.5171436039071091,"BTCUSDT":12.674251810597408}
+Open_prev = {"SPY":293.6925371164912,"AMZN":2290.3968386528845,"MSFT":174.74540339968718,"AAPL":288.9800104546998,"BTCUSDT":8664.537719219858}
+Previous = {"SPY":-1,"AMZN":-1,"MSFT":-1,"AAPL":-1,"BTCUSDT":1}
 
 c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
 conn.commit()
@@ -129,7 +129,7 @@ def on_close(ws):
         # print(c.fetchall())
 
 def on_open(ws):
-    tickers = ["LYFT","AMZN","MSFT","AAPL","BINANCE:BTCUSDT"]
+    tickers = ["SPY","AMZN","MSFT","AAPL","BINANCE:BTCUSDT"]
     for ticker in tickers:
         print('{{"type":"subscribe","symbol":"{}"}}'.format(ticker))
         ws.send('{{"type":"subscribe","symbol":"{}"}}'.format(ticker))
