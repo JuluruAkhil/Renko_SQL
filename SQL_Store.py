@@ -48,7 +48,7 @@ def on_message(ws, message):
     Date = json.loads(message)["data"][0]["t"]
     Close = json.loads(message)["data"][0]["p"]
     Volume = json.loads(message)["data"][0]["v"]
-    length = Close*0.3*0.01
+    length = Close*0.7*0.01
     
     if(i[Symbol]==0):
         Close_prev[Symbol]=Close
