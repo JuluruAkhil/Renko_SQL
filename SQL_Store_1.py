@@ -8,7 +8,7 @@ import websocket
 import json
 import sqlite3
 
-conn = sqlite3.connect("Renko.db")
+conn = sqlite3.connect("Renko_1.db")
 c = conn.cursor()
 
 tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
@@ -125,7 +125,7 @@ def on_close(ws):
         with conn:
             c.execute("INSERT INTO Prev_Data VALUES ('{}',{},{},{},{},{})".format(ticker, i[ticker], Close_prev[ticker], length[ticker], Open_prev[ticker], Previous[ticker]))
             c.execute("INSERT INTO {} VALUES ({},{},{},{},0)".format(ticker, 0, 0, 0, 0))
-        # c.execute("SELECT * FROM {}".format(ticker))
+        # c.execute("SELECT * FROM Prev_Data")
         # print(c.fetchall())
 
 def on_open(ws):
@@ -136,13 +136,14 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("wss://ws.finnhub.io?token=bqmh11vrh5rc5ul5lhg0",
+    ws = websocket.WebSocketApp("wss://ws.finnhub.io?token=bqpq2ffrh5rcg6od32eg",
                               on_message = on_message,
                               on_error = on_error,
                               on_close = on_close)
+    ws.on_open = on_open
     while True:
         try:
-           ws.run_forever()
+            ws.run_forever()
         except:
             pass
 

@@ -8,7 +8,7 @@ import websocket
 import json
 import sqlite3
 
-conn = sqlite3.connect("Renko_const.db")
+conn = sqlite3.connect("Renko_0.5.db")
 c = conn.cursor()
 
 tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
