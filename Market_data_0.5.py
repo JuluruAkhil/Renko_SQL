@@ -15,22 +15,22 @@ import time
 
 def Request_Data():
     headers = {"Accept-Encoding": "gzip","User-Agent": "okhttp/3.10.0"}
-    r = requests.get("http://163.47.9.131:4000/api/scrips/feed?channel_names=nse_cm_nifty_50%20nse_cm_nifty_bank%20nse_cm_reliance%20nse_cm_hdfcbank%20nse_cm_infy", headers = headers)
+    r = requests.get("http://163.47.9.131:4000/api/scrips/feed?channel_names=nse_cm_nifty_50%20nse_cm_nifty_bank%20nse_cm_reliance%20nse_cm_hdfcbank%20nse_cm_tatasteel", headers = headers)
     j = json.loads(r.text)
     for Symbol in j:
         j[Symbol] = float(j[Symbol].split("|")[0])
     return j
 
-conn = sqlite3.connect("Renko_Nse_0.5.db")
+conn = sqlite3.connect("Renko_Nse_1.db")
 c = conn.cursor()
 
-tickers = ["nse_cm_reliance","nse_cm_nifty_bank","nse_cm_nifty_50","nse_cm_infy","nse_cm_hdfcbank"]
+tickers = ["nse_cm_reliance","nse_cm_nifty_bank","nse_cm_nifty_50","nse_cm_tatasteel","nse_cm_hdfcbank"]
 
-i = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_infy":0,"nse_cm_hdfcbank":0}
-Close_prev = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_infy":0,"nse_cm_hdfcbank":0}
-length = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_infy":0,"nse_cm_hdfcbank":0}
-Open_prev = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_infy":0,"nse_cm_hdfcbank":0}
-Previous = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_infy":0,"nse_cm_hdfcbank":0}
+i = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_tatasteel":0,"nse_cm_hdfcbank":0}
+Close_prev = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_tatasteel":0,"nse_cm_hdfcbank":0}
+length = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_tatasteel":0,"nse_cm_hdfcbank":0}
+Open_prev = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_tatasteel":0,"nse_cm_hdfcbank":0}
+Previous = {"nse_cm_reliance":0,"nse_cm_nifty_bank":0,"nse_cm_nifty_50":0,"nse_cm_tatasteel":0,"nse_cm_hdfcbank":0}
 
 c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
 conn.commit()
