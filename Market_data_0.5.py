@@ -21,7 +21,7 @@ def Request_Data():
         j[Symbol] = float(j[Symbol].split("|")[0])
     return j
 
-conn = sqlite3.connect("Renko_Nse_1.db")
+conn = sqlite3.connect("Renko_Nse_0.5.db")
 c = conn.cursor()
 
 tickers = ["nse_cm_reliance","nse_cm_nifty_bank","nse_cm_nifty_50","nse_cm_tatasteel","nse_cm_hdfcbank"]
