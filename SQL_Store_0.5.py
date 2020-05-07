@@ -13,11 +13,11 @@ c = conn.cursor()
 
 tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
 
-i = {"SPY":1,"AMZN":1,"MSFT":1,"AAPL":1,"BTCUSDT":1}
-Close_prev = {"SPY":284.7119733128265,"AMZN":2302.286885431811,"MSFT":174.2538711995829,"AAPL":288.4628668507927,"BTCUSDT":8669.817692264956}
-length = {"SPY":4.49028190183235,"AMZN":11.890046778926063,"MSFT":0.4915322001042619,"AAPL":0.5171436039071091,"BTCUSDT":26.76803419278337}
-Open_prev = {"SPY":293.6925371164912,"AMZN":2290.3968386528845,"MSFT":174.74540339968718,"AAPL":288.9800104546998,"BTCUSDT":8643.049658072174}
-Previous = {"SPY":-1,"AMZN":-1,"MSFT":-1,"AAPL":-1,"BTCUSDT":1}
+i = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Close_prev = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+length = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Open_prev = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
+Previous = {"SPY":0,"AMZN":0,"MSFT":0,"AAPL":0,"BTCUSDT":0}
 
 c.execute("CREATE TABLE IF NOT EXISTS Prev_Data (Symbol text,i real,Close_prev real,length real,Open_prev real, Previous real)")
 conn.commit()
@@ -39,7 +39,7 @@ for ticker in tickers:
             
 
 def on_message(ws, message):
-    global i, Close_prev, Open_prev, Previous, length
+    global i, Close_prev, Open_prev, Previous
     # print(message)
     # global length
     Symbol = json.loads(message)["data"][0]["s"]
@@ -48,7 +48,7 @@ def on_message(ws, message):
     Date = json.loads(message)["data"][0]["t"]
     Close = json.loads(message)["data"][0]["p"]
     Volume = json.loads(message)["data"][0]["v"]
-    # length = Close*0.3*0.01
+    length = Close*0.3*0.01
     
     if(i[Symbol]==0):
         Close_prev[Symbol]=Close
@@ -57,57 +57,57 @@ def on_message(ws, message):
             c.execute("INSERT INTO {} VALUES ({},{},{},{},1)".format(Symbol, Date, Close, Close, Volume))
         i[Symbol]=1
     elif(i[Symbol]==1 and Previous[Symbol]==0):
-        if((Close-Close_prev[Symbol])/length[Symbol]>=1):
-            for j in range(int(abs(Close-Close_prev[Symbol])//length[Symbol])):
-                Close=Close_prev[Symbol]+length[Symbol]*(j+1)
-                Close_prev[Symbol]=Close_prev[Symbol]+length[Symbol]*j
+        if((Close-Close_prev[Symbol])/length>=1):
+            for j in range(int(abs(Close-Close_prev[Symbol])//length)):
+                Close=Close_prev[Symbol]+length*(j+1)
+                Close_prev[Symbol]=Close_prev[Symbol]+length*j
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},2)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
             Close_prev[Symbol]=Close
             Previous[Symbol]=1
-        elif((Close-Close_prev[Symbol])/length[Symbol]<=-1):
-            for k in range(int(abs(Close-Close_prev[Symbol])//length[Symbol])):
-                Close=Close_prev[Symbol]-length[Symbol]*(k+1)
-                Close_prev[Symbol]=Close_prev[Symbol]-length[Symbol]*k
+        elif((Close-Close_prev[Symbol])/length<=-1):
+            for k in range(int(abs(Close-Close_prev[Symbol])//length)):
+                Close=Close_prev[Symbol]-length*(k+1)
+                Close_prev[Symbol]=Close_prev[Symbol]-length*k
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},3)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
             Close_prev[Symbol]=Close
             Previous[Symbol]=-1
     elif(i[Symbol]==1 and Previous[Symbol]==1):
-        if((Close-Close_prev[Symbol])/length[Symbol]>=1):
-            for j in range(int(abs(Close-Close_prev[Symbol])//length[Symbol])):
-                Close=Close_prev[Symbol]+length[Symbol]*(j+1)
-                Close_prev[Symbol]=Close_prev[Symbol]+length[Symbol]*j
+        if((Close-Close_prev[Symbol])/length>=1):
+            for j in range(int(abs(Close-Close_prev[Symbol])//length)):
+                Close=Close_prev[Symbol]+length*(j+1)
+                Close_prev[Symbol]=Close_prev[Symbol]+length*j
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},4)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
             Close_prev[Symbol]=Close
             Previous[Symbol]=1
-        elif((Close-Open_prev[Symbol])/length[Symbol]<=-1):
-            for k in range(int(abs(Close-Open_prev[Symbol])//length[Symbol])):
-                Close=Open_prev[Symbol]-length[Symbol]*(k+1)
-                Close_prev[Symbol]=Open_prev[Symbol]-length[Symbol]*k
+        elif((Close-Open_prev[Symbol])/length<=-1):
+            for k in range(int(abs(Close-Open_prev[Symbol])//length)):
+                Close=Open_prev[Symbol]-length*(k+1)
+                Close_prev[Symbol]=Open_prev[Symbol]-length*k
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},5)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
             Close_prev[Symbol]=Close
             Previous[Symbol]=-1
     elif(i[Symbol]==1 and Previous[Symbol]==-1):
-        if((Close-Open_prev[Symbol])/length[Symbol]>=1):
-            for j in range(int(abs(Close-Open_prev[Symbol])//length[Symbol])):
-                Close=Open_prev[Symbol]+length[Symbol]*(j+1)
-                Close_prev[Symbol]=Open_prev[Symbol]+length[Symbol]*j
+        if((Close-Open_prev[Symbol])/length>=1):
+            for j in range(int(abs(Close-Open_prev[Symbol])//length)):
+                Close=Open_prev[Symbol]+length*(j+1)
+                Close_prev[Symbol]=Open_prev[Symbol]+length*j
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},6)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
             Close_prev[Symbol]=Close
             Previous[Symbol]=1
-        elif((Close-Close_prev[Symbol])/length[Symbol]<=-1):
-            for k in range(int(abs(Close-Close_prev[Symbol])//length[Symbol])):
-                Close=Close_prev[Symbol]-length[Symbol]*(k+1)
-                Close_prev[Symbol]=Close_prev[Symbol]-length[Symbol]*k
+        elif((Close-Close_prev[Symbol])/length<=-1):
+            for k in range(int(abs(Close-Close_prev[Symbol])//length)):
+                Close=Close_prev[Symbol]-length*(k+1)
+                Close_prev[Symbol]=Close_prev[Symbol]-length*k
                 with conn:
                     c.execute("INSERT INTO {} VALUES ({},{},{},{},7)".format(Symbol, Date, Close_prev[Symbol], Close, Volume))
             Open_prev[Symbol]=Close_prev[Symbol]
