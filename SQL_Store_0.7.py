@@ -8,7 +8,7 @@ import websocket
 import json
 import sqlite3
 
-conn = sqlite3.connect("Renko_0.5.db")
+conn = sqlite3.connect("Renko_0.7.db")
 c = conn.cursor()
 
 tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
@@ -48,7 +48,7 @@ def on_message(ws, message):
     Date = json.loads(message)["data"][0]["t"]
     Close = json.loads(message)["data"][0]["p"]
     Volume = json.loads(message)["data"][0]["v"]
-    length = Close*0.3*0.01
+    length = Close*0.7*0.01
     
     if(i[Symbol]==0):
         Close_prev[Symbol]=Close
