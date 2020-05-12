@@ -42,7 +42,7 @@ def on_message(ws, message):
     global i, Close_prev, Open_prev, Previous
     # print(message)
     # global length
-    Symbol = str(message).split("|")[0].split("'")[1]
+    Symbol = str(message).split("|")[0].split("'")[1].strip()
     Close = float(str(message).split("|")[1].split("\\")[0])
     if (Symbol == "BINANCE:BTCUSDT"):
         Symbol = "BTCUSDT"
