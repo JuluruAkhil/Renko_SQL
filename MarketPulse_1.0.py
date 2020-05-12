@@ -7,6 +7,9 @@ Created on Tue Mar 17 11:49:07 2020
 import websocket
 import sqlite3
 import time
+import requests
+import random
+import json
 
 conn = sqlite3.connect("Renko_NSE_1.0.db")
 c = conn.cursor()
@@ -138,15 +141,15 @@ def on_open(ws):
     ws.send('type=msubscribe&channels={} &columns=1'.format(t[1:]))
 
 if __name__ == "__main__":
-    websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://206.189.146.165:10000/",
-                              on_message = on_message,
-                              on_error = on_error,
-                              on_close = on_close)
-    ws.on_open = on_open
-    # ws.run_forever()
     while True:
+        time.sleep(5)
         try:
+            websocket.enableTrace(True)
+            ws = websocket.WebSocketApp("ws://" + random.choice(json.loads(requests.get("http://165.22.204.3:4001/api/v3/servers.json", headers = {"Accept-Encoding": "gzip", "User-Agent": "okhttp/3.10.0"}).text)["QUOTES_STREAMER"]) + "/",
+                                      on_message = on_message,
+                                      on_error = on_error,
+                                      on_close = on_close)
+            ws.on_open = on_open
             ws.run_forever()
         except:
             pass
