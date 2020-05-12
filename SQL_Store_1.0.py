@@ -146,6 +146,6 @@ if __name__ == "__main__":
         try:
             ws.run_forever()
         except:
-        	time.sleep(10)
+            time.sleep(10)
             pass
 
