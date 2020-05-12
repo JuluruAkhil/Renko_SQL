@@ -7,8 +7,9 @@ Created on Tue Mar 17 11:49:07 2020
 import websocket
 import json
 import sqlite3
+import time
 
-conn = sqlite3.connect("Renko_1.db")
+conn = sqlite3.connect("Renko_1.0.db")
 c = conn.cursor()
 
 tickers = ["SPY","AMZN","MSFT","AAPL","BTCUSDT"]
@@ -145,5 +146,6 @@ if __name__ == "__main__":
         try:
             ws.run_forever()
         except:
+        	time.sleep(10)
             pass
 
